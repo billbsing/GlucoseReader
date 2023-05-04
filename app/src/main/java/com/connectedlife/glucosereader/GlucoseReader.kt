@@ -6,15 +6,19 @@ import android.util.Log
 
 
 class GlucoseReader(val tag: Tag) {
-    val handle: NfcV = NfcV.get(tag)
+
+    companion object {
+        const val TAG: String = "GlucoseReader"
+    }
+    private val handle: NfcV = NfcV.get(tag)
     val uid: ByteArray? = tag.id
-    private val TAG: String = "GlucoseReader"
+
     var sensorType: String = ""
     var data: ByteArray = ByteArray(0)
 
-    val LIBRE1_ID = byteArrayOf(0xA2.toByte(), 0x08.toByte(), 0x00.toByte())
-    val LIBRE_OLD_ID = byteArrayOf(0xE9.toByte(), 0x00.toByte(), 0x00.toByte())
-    val LIBRE1_JAPAN_ID = byteArrayOf(0x00.toByte(), 0x00.toByte(), 0x04.toByte())
+    private val LIBRE1_ID = byteArrayOf(0xA2.toByte(), 0x08.toByte(), 0x00.toByte())
+    private val LIBRE_OLD_ID = byteArrayOf(0xE9.toByte(), 0x00.toByte(), 0x00.toByte())
+    private val LIBRE1_JAPAN_ID = byteArrayOf(0x00.toByte(), 0x00.toByte(), 0x04.toByte())
 
 
     fun readIdentity() {
@@ -44,7 +48,7 @@ class GlucoseReader(val tag: Tag) {
     fun readData() {
         data = ByteArray(0)
         Log.d(TAG, "reading block data")
-        for (blockIndex in 0..43 step 3) {
+        for (blockIndex in 0 until 43 step 3) {
             Log.d(TAG, "reading: $blockIndex")
             val commandList = byteArrayOf(0x02.toByte(), 0x23.toByte(), blockIndex.toByte(), 0x02.toByte())
             val rxData: ByteArray = sendCommand(commandList)
