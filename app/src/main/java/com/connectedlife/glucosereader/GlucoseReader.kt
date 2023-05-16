@@ -3,6 +3,7 @@ package com.connectedlife.glucosereader
 import android.nfc.Tag
 import android.nfc.tech.NfcV
 import android.util.Log
+import com.connectedlife.glucosereader.SensorByteArray.Factory.sensorByteArrayOf
 
 
 class GlucoseReader(val tag: Tag) {
@@ -14,7 +15,7 @@ class GlucoseReader(val tag: Tag) {
     val uid: ByteArray? = tag.id
 
     var sensorType: String = ""
-    var data: ByteArray = ByteArray(0)
+    var uuid: String = ""
 
     private val LIBRE1_ID = byteArrayOf(0xA2.toByte(), 0x08.toByte(), 0x00.toByte())
     private val LIBRE_OLD_ID = byteArrayOf(0xE9.toByte(), 0x00.toByte(), 0x00.toByte())
@@ -45,8 +46,8 @@ class GlucoseReader(val tag: Tag) {
         Log.d(TAG, "sensorType $sensorType")
     }
 
-    fun readData() {
-        data = ByteArray(0)
+    fun readData(): ByteArray {
+        var data = ByteArray(0)
         Log.d(TAG, "reading block data")
         for (blockIndex in 0 until 43 step 3) {
             Log.d(TAG, "reading: $blockIndex")
@@ -55,6 +56,18 @@ class GlucoseReader(val tag: Tag) {
             data += rxData.drop(1)
         }
         Log.d(TAG, "reading completed ${data.size}")
+        return data
+    }
+
+    fun readUUID() {
+        val idCommandList = byteArrayOf(0x26.toByte(), 0x01.toByte(), 0x00.toByte())
+        val rxData: ByteArray = sendCommand(idCommandList)
+        var data = sensorByteArrayOf(rxData)
+        data = data.copyFrom(2)
+        Log.d(TAG, "uuid: ")
+        data.log()
+        uuid = data.toHexString()
+        Log.d(TAG, "UUID: ${uuid}")
     }
 
     private fun sendCommand(commandList: ByteArray): ByteArray {

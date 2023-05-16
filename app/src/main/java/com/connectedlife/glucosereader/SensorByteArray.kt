@@ -45,6 +45,14 @@ class SensorByteArray(val data: ByteArray) {
         return (data.get(index).toInt() and 0xFF)
     }
 
+    fun toHexString(): String {
+        var result: String = ""
+        for (value in data) {
+            result += "%02X".format(value)
+        }
+        return result
+    }
+
     private fun bitReverse(data: Byte): Int {
         return data.toInt() shl 7 and 0x80 or (data.toInt() shl 5 and 0x40) or (data.toInt() shl 3 and 0x20) or (data.toInt() shl 1 and 0x10) or (data.toInt() shr 7 and 0x01) or (data.toInt() shr 5 and 0x02) or (data.toInt() shr 3 and 0x04) or (data.toInt() shr 1 and 0x08)
     }

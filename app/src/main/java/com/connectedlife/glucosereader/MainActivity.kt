@@ -97,8 +97,9 @@ class MainActivity : AppCompatActivity() {
 
             val glucoseReader: GlucoseReader = GlucoseReader(tag)
             glucoseReader.readIdentity()
-            glucoseReader.readData()
-            val glucoseDecoder: GlucoseDecoder = GlucoseDecoder(glucoseReader.data)
+            glucoseReader.readUUID()
+            val data = glucoseReader.readData()
+            val glucoseDecoder: GlucoseDecoder = GlucoseDecoder(data)
             glucoseDecoder.sensorData.log()
             glucoseDecoder.load()
 
